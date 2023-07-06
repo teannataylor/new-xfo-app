@@ -2,19 +2,11 @@ import React, { useEffect, useState } from 'react';
 
 function ReviewCard({ review, setProducts }) {
   const { id, user_id, comment } = review;
-  const [username, setUsername] = useState('');
-  console.log(id)
-  console.log(user_id)
+  const [errors, setErrors] = useState([]);
+
   useEffect(() => {
-    fetch(`/users/${user_id}/public_show`)
-      .then((response) => response.json())
-      .then((data) => {
-        setUsername(data.username);
-      })
-      .catch((error) => {
-        console.error('Error occurred during user fetch:', error);
-      });
-  }, [user_id]);
+    setErrors([]); // Reset errors when the component re-renders
+  }, [id]);
 
   const handleDelete = () => {
     fetch(`/reviews/${id}`, {
@@ -32,20 +24,26 @@ function ReviewCard({ review, setProducts }) {
             return updatedProducts;
           });
         } else {
-          console.log('Error deleting review');
+          return response.json().then((data) => {
+            throw new Error(data.error);
+          });
         }
       })
       .catch((error) => {
-        console.error('Error occurred during review delete:', error);
+        setErrors([error.message]);
       });
   };
 
   return (
     <div className="review-card">
-    <p className="username">Username: {username}</p>
-    <p>Comment: {comment}</p>
-    <button onClick={handleDelete}>Delete</button>
-  </div>
+      <div className="error-container">
+        {errors.map((error, index) => (
+          <p key={index}>{error}</p>
+        ))}
+      </div>
+      <p>Comment: {comment}</p>
+      <button onClick={handleDelete}>Delete</button>
+    </div>
   );
 }
 

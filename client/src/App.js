@@ -8,7 +8,6 @@ import SignUp from './components/SignUp';
 import EditProduct from './components/EditProduct';
 import AddProduct from './components/AddProduct';
 import AddReview from './components/AddReview';
-
 import './App.css';
 
 function App() {

@@ -12,6 +12,8 @@ import NavBar from './NavBar'
 
 function AddProduct({setProducts}) {
   const navigate = useNavigate();
+  const [errorMessages, setErrorMessages] = useState([]);
+
   const defaultFormData = {
     name: "",
     image_url: "",
@@ -51,14 +53,25 @@ function AddProduct({setProducts}) {
 
   fetch("/products", config)
   .then((res) => res.json()) //parses the data/response once it is resolved  into consumable JSON
-  .then((newProduct) => setProducts((prevState) => [...prevState, newProduct])); //2nd promise rec'vs the data and is used to set state
-  navigate('/homepage'); // Navigate to the desired page after form submission
-  };
-
+  .then((data) => {
+    if (!data.errors) {
+      setProducts((prevState) => [...prevState, data]); // 2nd promise receives the data and is used to set state
+      navigate('/homepage');
+    } else {
+      setErrorMessages(data.errors);
+    }
+  })
+}
   return (
     <div>
       <NavBar />
       <div>
+      <div className="error-container">
+       {errorMessages.map((error, index) => (
+        <p key={index}>{error}</p>
+         ))}
+       </div>
+
         <form className='form-container' onSubmit={handleSubmit}>
           <label htmlFor="name">Name:</label>
           <input
@@ -121,4 +134,4 @@ function AddProduct({setProducts}) {
 }
 
 
-export default AddProduct
+export default AddProduct;

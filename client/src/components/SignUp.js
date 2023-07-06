@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { UserContext } from '../context/user';
 
 function SignUp() {
-  const { signup, signupError } = useContext(UserContext);
+  const { signup } = useContext(UserContext);
   const [userObj, setUserObj] = useState({
     username: '',
     password: '',
@@ -48,7 +48,6 @@ function SignUp() {
       </label>
 
       <button type="submit">Sign Up</button>
-      {signupError && <p style={{ color: 'red' }}>{signupError}</p>}
     </form>
   );
 }

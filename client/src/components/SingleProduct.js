@@ -42,6 +42,7 @@ function SingleProduct({ products, setProducts }) {
 
   function handleAddReview(newReview) {
     // Update the product's reviews with the new review
+    console.log(newReview)
     const updatedProduct = {
       ...product,
       reviews: [...product.reviews, newReview],

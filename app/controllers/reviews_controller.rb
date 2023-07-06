@@ -24,10 +24,15 @@ class ReviewsController < ApplicationController
     end
   
     def destroy
-        review = current_user.reviews.find(params[:id])
-        review.destroy 
+      review = current_user.reviews.find(params[:id])
+    
+      if review.destroy
         head :no_content
+      else
+        render json: { error: "Review deletion failed" }, status: :unprocessable_entity
       end
+    end
+    
   
     private 
   

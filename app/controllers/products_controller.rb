@@ -14,13 +14,21 @@ class ProductsController < ApplicationController
 
   def create
     product = current_user.products.create!(product_params)
-    render json: product, status: :created
+    if product.save
+      render json: product, status: :created
+    else 
+      render json: {errors: product.errors.full_messages}, status: :unprocessable_entity
+    end
   end
+      
 
   def update
     product = current_user.products.find(params[:id])
-    product.update!(product_params)
-    render json: product, status: :accepted
+    if product.update(product_params)
+      render json: product, status: :accepted
+    else 
+      render json: { errors: product.errors.full_messages }, status: :unprocessable_entity
+    end
   end
 
   def destroy

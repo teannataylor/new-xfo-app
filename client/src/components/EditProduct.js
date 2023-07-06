@@ -5,9 +5,16 @@ import NavBar from './NavBar';
 function EditProduct({ onProductUpdate }) {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [currentData, setCurrentData] = useState('');
+  const [currentData, setCurrentData] = useState({
+    name: '',
+    brand: '',
+    category: '',
+    description: '',
+    price: '',
+    image_url: '',
+  });
   const [submitted, setSubmitted] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [errorMessage, setErrorMessage] = useState([]);
 
   useEffect(() => {
     console.log('ID:', id);
@@ -28,17 +35,23 @@ function EditProduct({ onProductUpdate }) {
       },
       body: JSON.stringify(currentData),
     })
-      .then((r) => r.json())
       .then((response) => {
-        if (response.errors) {
-          setErrors(response.errors);
+        if (response.ok) {
+          return response.json();
         } else {
-          onProductUpdate(response);
-          setSubmitted(true);
-          navigate(`/products/${id}`);
+          throw new Error('Error updating product'); // Throw an error for non-200 responses
         }
+      })
+      .then((data) => {
+        onProductUpdate(data);
+        setSubmitted(true);
+        navigate(`/products/${id}`);
+      })
+      .catch((error) => {
+        setErrorMessage([error.message]); // Set the error message to be displayed
       });
   }
+  
 
   function handleChange(e) {
     const key = e.target.name;
@@ -53,15 +66,11 @@ function EditProduct({ onProductUpdate }) {
       <NavBar />
       <div className="edit-product-container">
         <form onSubmit={handleSubmit} className="edit-product-form">
-        {errors && (
-            <div className="form-group">
-              <ul className="error-list">
-                {Object.values(errors).map((error, index) => (
-                  <li key={index}>{error}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <div className="error-container">
+            {errorMessage.map((error, index) => (
+              <p key={index}>{error}</p>
+            ))}
+          </div>
           <div className="form-group">
             <label htmlFor="name" className="form-label">
               Product Name
@@ -126,7 +135,6 @@ function EditProduct({ onProductUpdate }) {
               className="form-control"
               onChange={handleChange}
               value={currentData.price}
-              type="text"
               name="price"
               id="price"
               placeholder="Product Price"
