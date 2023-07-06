@@ -5,8 +5,6 @@ const UserContext = React.createContext();
 
 function UserProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loginError, setLoginError] = useState(null);
-  const [signupError, setSignupError] = useState(null);
   const navigate = useNavigate();
 
   const getCurrentUser = useCallback(async () => {
@@ -18,11 +16,10 @@ function UserProvider({ children }) {
         setUser(data);
       } else {
         const errorObj = await response.json();
-        throw new Error(errorObj.error);
+        console.error(errorObj.error);
       }
     } catch (error) {
       console.error(error);
-      throw error;
     }
   }, []);
 
@@ -38,18 +35,16 @@ function UserProvider({ children }) {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data)
+        console.log(data);
         setUser(data);
         navigate('/homepage');
         return true;
       } else {
         const errorData = await response.json();
-        setLoginError(errorData.message);
-        throw new Error(errorData.message);
+        console.error(errorData.message);
       }
     } catch (error) {
       console.error(error);
-      throw error;
     }
   };
 
@@ -62,7 +57,6 @@ function UserProvider({ children }) {
       navigate('/');
     } catch (error) {
       console.error(error);
-      throw error;
     }
   };
 
@@ -82,18 +76,16 @@ function UserProvider({ children }) {
         navigate('/');
       } else {
         const errorData = await response.json();
-        setSignupError(errorData.message);
-        throw new Error(errorData.message);
+        console.error(errorData.message);
       }
     } catch (error) {
       console.error(error);
-      throw error;
     }
   };
 
   return (
     <UserContext.Provider
-      value={{ user, setUser, getCurrentUser, logout, signup, login, loginError, signupError }}
+      value={{ user, setUser, getCurrentUser, logout, signup, login }}
     >
       {children}
     </UserContext.Provider>

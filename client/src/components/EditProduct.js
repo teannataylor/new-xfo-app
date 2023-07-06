@@ -52,7 +52,6 @@ function EditProduct({ onProductUpdate }) {
     <div>
       <NavBar />
       <div className="edit-product-container">
-        <h2>Edit Product</h2>
         <form onSubmit={handleSubmit} className="edit-product-form">
         {errors && (
             <div className="form-group">
